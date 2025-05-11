@@ -1,4 +1,9 @@
-FROM golang:1.23-alpine
+FROM golang:1.24-alpine
+
+RUN apk add --no-cache gcc musl-dev sqlite-dev
+ENV CGO_ENABLED=1 \
+    GOOS=linux \
+    GOARCH=amd64
 
 WORKDIR /app
 
@@ -10,7 +15,10 @@ ENV TIME_MULTIPLICATIONS_MS=1000
 ENV TIME_SUBTRACTION_MS=1000
 ENV COMPUTING_POWER=10
 ENV ORCHESTRATOR_PORT="8080"
+ENV ORCHESTRATOR_GRPC_PORT="50051"
+
+RUN go build -o calc_service main.go
 
 EXPOSE 8080
 
-CMD ["go", "run", "main.go"]
+CMD ["./calc_service"]
